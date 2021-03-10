@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: myFirstModule
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/myfirst/**
+          filters:
+          - name: Hystrix
+            args:
+              name: first-service
+              fallbackUri: forward:/firstservicefallback
+
+        - id: mySecondModule
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/mySecond/**
+          filters:
+            - name: Hystrix
+              args:
+                name: second-service
+                fallbackUri: forward:/secondservicefallback
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
